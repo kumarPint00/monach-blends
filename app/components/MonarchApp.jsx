@@ -46,7 +46,7 @@ const DEF_SVCS = [
 ];
 const DEF_SETTINGS = {phone:"+91 99989 08799 / +91 94096 78113",email:"shreesiddheshwarienterprisepvt@gmail.com",address:"Gujarat, India",hours:"Mon–Sat  9:00 AM – 6:00 PM IST"};
 const TENANT_ID = process.env.NEXT_PUBLIC_TENANT_ID || "monarch-blends";
-const CONTENT_VERSION = "2026-07-23-xlsx-1";
+const CONTENT_VERSION = "2026-07-24-age-consent";
 const INDIAN_REGIONS = [
   {state:"Andhra Pradesh",districts:["Anantapur","Chittoor","East Godavari","Guntur","Krishna","Kurnool","Nellore","Prakasam","Srikakulam","Visakhapatnam","Vizianagaram","West Godavari","YSR Kadapa"]},
   {state:"Arunachal Pradesh",districts:["Anjaw","Changlang","East Kameng","East Siang","Kurung Kumey","Lohit","Lower Dibang Valley","Lower Subansiri","Papum Pare","Tawang","Tirap","Upper Siang","Upper Subansiri","West Kameng","West Siang"]},
@@ -91,10 +91,11 @@ const DEFAULT_CONTENT = {
   companyName:"Shree Siddheshwari Enterprise Pvt. Ltd.",
   logoAlt:"Monarch Blends",
   ageGate:{
-    title:"18+ Age Verification",
+    title:"18+ User Consent",
     text:"This website contains tobacco-related business information and is intended only for users aged 18 years or above.",
-    yes:"Yes, I am 18+",
-    no:"No, leave site",
+    consentLabel:"I confirm that I am 18 years or older and consent to view this website.",
+    yes:"Enter Site",
+    no:"Leave Site",
     blockedTitle:"Access Restricted",
     blockedText:"You must be 18 years or older to view this website."
   },
@@ -293,6 +294,7 @@ const SecTitle = ({children,white,mb=48}) => (
 
 function AgeGate({copy}) {
   const [ok,setOk] = useState(null);
+  const [consent,setConsent] = useState(false);
   useEffect(()=>{
     setOk(window.localStorage.getItem("monarch_age_confirmed")==="yes");
   },[]);
@@ -303,11 +305,18 @@ function AgeGate({copy}) {
         <GoldText sz={22} ls={2} style={{display:"block",marginBottom:16}}>{ok===false?copy?.blockedTitle:copy?.title}</GoldText>
         <p style={{fontSize:14,color:MU,lineHeight:1.8,marginBottom:24}}>{ok===false?copy?.blockedText:copy?.text}</p>
         {ok===false?(
-          <Btn outline onClick={()=>window.location.href="https://www.google.com"}>Leave Site</Btn>
+          <Btn outline onClick={()=>window.location.href="https://www.google.com"}>{copy?.no || "Leave Site"}</Btn>
         ):(
-          <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
-            <Btn onClick={()=>{window.localStorage.setItem("monarch_age_confirmed","yes");setOk(true);}}>{copy?.yes}</Btn>
-            <Btn outline onClick={()=>setOk(false)}>{copy?.no}</Btn>
+          <div>
+            <label style={{display:"flex",alignItems:"flex-start",gap:12,textAlign:"left",fontSize:13,color:GP,lineHeight:1.7,marginBottom:24,cursor:"pointer"}}>
+              <input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}
+                style={{width:18,height:18,marginTop:2,accentColor:G,flexShrink:0}}/>
+              <span>{copy?.consentLabel || DEFAULT_CONTENT.ageGate.consentLabel}</span>
+            </label>
+            <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
+              <Btn onClick={()=>{if(consent){window.localStorage.setItem("monarch_age_confirmed","yes");setOk(true);}}}>{copy?.yes}</Btn>
+              <Btn outline onClick={()=>setOk(false)}>{copy?.no}</Btn>
+            </div>
           </div>
         )}
       </div>
