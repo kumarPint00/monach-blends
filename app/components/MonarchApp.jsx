@@ -26,26 +26,78 @@ async function askClaude(msg) {
 
 // ─── Default data ─────────────────────────────────────────────
 const DEF_JOBS = [
-  {title:"Production Supervisor",location:"Gujarat",type:"Full-time",dept:"Manufacturing",active:true},
   {title:"Quality Control Analyst",location:"Gujarat",type:"Full-time",dept:"QA/QC",active:true},
   {title:"Sales & Distribution Executive",location:"Pan India",type:"Full-time",dept:"Sales",active:true},
   {title:"Machinery Sales Executive",location:"Pan India",type:"Full-time",dept:"Machinery",active:true},
-  {title:"Compliance & Legal Officer",location:"Gujarat",type:"Full-time",dept:"Legal",active:true},
+  {title:"Machine Technician",location:"Gujarat",type:"Full-time",dept:"Machinery",active:true},
+  {title:"Electrical Technician",location:"Gujarat",type:"Full-time",dept:"Maintenance",active:true},
+  {title:"Skilled Worker",location:"Gujarat",type:"Full-time",dept:"Manufacturing",active:true},
+  {title:"Marketing Manager",location:"Pan India",type:"Full-time",dept:"Marketing",active:true},
+  {title:"Forklift Driver & Truck Driver",location:"Gujarat",type:"Full-time",dept:"Logistics",active:true},
+  {title:"Shift Supervisor",location:"Gujarat",type:"Full-time",dept:"Manufacturing",active:true},
+  {title:"Research and Development Department",location:"Gujarat",type:"Full-time",dept:"R&D",active:true},
 ];
 const DEF_SVCS = [
   {num:"01",title:"Premium Cigarette Manufacturing",desc:"Full-scale production using hand-picked tobacco leaves and a proprietary North American formula refined over 2+ years of R&D.",tag:"Core Product"},
-  {num:"02",title:"Exclusive Machinery Sales",desc:"We hold exclusive master rights to sell our proprietary cigarette-making machinery across India and neighbouring countries. Tube system fully customisable per blend, size, filter and output.",tag:"Exclusive Rights"},
-  {num:"03",title:"Dealer & Distributor Programme",desc:"Three-tier partnership — retail dealer, area distributor, and state master distributor — with exclusive territory rights, competitive margins, and full support.",tag:"Partnerships"},
-  {num:"04",title:"Custom Branding & Packaging",desc:"Fully COTPA-compliant custom label design and packaging for B2B clients. Pictorial warnings, legal text, and premium aesthetics all handled in-house.",tag:"B2B"},
-  {num:"05",title:"Trade & Distribution Logistics",desc:"Pan-India distribution with reliable stock management and timely delivery to all wholesale and retail partners.",tag:"Logistics"},
-  {num:"06",title:"Regulatory & Compliance Advisory",desc:"Expert guidance on GST filings, excise documentation, and COTPA compliance — keeping your operations fully legal.",tag:"Advisory"},
+  {num:"02",title:"Exclusive Machinery Sales and Support",desc:"We hold exclusive master rights to sell our proprietary cigarette-making machinery across India and neighbouring countries. Our cigarette paper tube system is fully customisable per blend, size, filter, and output specification.",tag:"Exclusive Rights"},
+  {num:"03",title:"Dealer & Distributor Programme",desc:"Three-tier partnership: retail dealer, area distributor, and state master distributor, with exclusive territory rights, competitive margins, and full support at every level.",tag:"Partnerships"},
+  {num:"04",title:"Custom Branding & Packaging",desc:"Fully COTPA-compliant custom label design and packaging for B2B clients. Pictorial warnings, legal text, and premium aesthetics are handled in-house.",tag:"B2B"},
+  {num:"05",title:"Trade & Distribution Logistics",desc:"Pan-India distribution with reliable stock management and timely delivery to wholesale and retail partners.",tag:"Logistics"},
 ];
 const DEF_SETTINGS = {phone:"+91 99989 08799 / +91 94096 78113",email:"shreesiddheshwarienterprisepvt@gmail.com",address:"Gujarat, India",hours:"Mon–Sat  9:00 AM – 6:00 PM IST"};
 const TENANT_ID = process.env.NEXT_PUBLIC_TENANT_ID || "monarch-blends";
+const CONTENT_VERSION = "2026-07-23-xlsx-1";
+const INDIAN_REGIONS = [
+  {state:"Andhra Pradesh",districts:["Anantapur","Chittoor","East Godavari","Guntur","Krishna","Kurnool","Nellore","Prakasam","Srikakulam","Visakhapatnam","Vizianagaram","West Godavari","YSR Kadapa"]},
+  {state:"Arunachal Pradesh",districts:["Anjaw","Changlang","East Kameng","East Siang","Kurung Kumey","Lohit","Lower Dibang Valley","Lower Subansiri","Papum Pare","Tawang","Tirap","Upper Siang","Upper Subansiri","West Kameng","West Siang"]},
+  {state:"Assam",districts:["Baksa","Barpeta","Bongaigaon","Cachar","Darrang","Dhemaji","Dhubri","Dibrugarh","Goalpara","Golaghat","Hailakandi","Jorhat","Kamrup","Karbi Anglong","Lakhimpur","Nagaon","Sivasagar","Sonitpur","Tinsukia"]},
+  {state:"Bihar",districts:["Araria","Aurangabad","Bhagalpur","Bhojpur","Darbhanga","Gaya","Katihar","Madhubani","Muzaffarpur","Nalanda","Patna","Purnia","Rohtas","Samastipur","Saran","Siwan","Vaishali"]},
+  {state:"Chhattisgarh",districts:["Balod","Baloda Bazar","Bastar","Bilaspur","Dhamtari","Durg","Janjgir-Champa","Korba","Mahasamund","Raigarh","Raipur","Rajnandgaon","Surguja"]},
+  {state:"Goa",districts:["North Goa","South Goa"]},
+  {state:"Gujarat",districts:["Ahmedabad","Amreli","Anand","Aravalli","Banaskantha","Bharuch","Bhavnagar","Botad","Chhota Udaipur","Dahod","Dang","Devbhoomi Dwarka","Gandhinagar","Gir Somnath","Jamnagar","Junagadh","Kutch","Kheda","Mahisagar","Mehsana","Morbi","Narmada","Navsari","Panchmahal","Patan","Porbandar","Rajkot","Sabarkantha","Surat","Surendranagar","Tapi","Vadodara","Valsad"]},
+  {state:"Haryana",districts:["Ambala","Bhiwani","Faridabad","Fatehabad","Gurugram","Hisar","Jhajjar","Jind","Kaithal","Karnal","Kurukshetra","Panipat","Rewari","Rohtak","Sirsa","Sonipat","Yamunanagar"]},
+  {state:"Himachal Pradesh",districts:["Bilaspur","Chamba","Hamirpur","Kangra","Kinnaur","Kullu","Lahaul and Spiti","Mandi","Shimla","Sirmaur","Solan","Una"]},
+  {state:"Jharkhand",districts:["Bokaro","Chatra","Deoghar","Dhanbad","Dumka","East Singhbhum","Garhwa","Giridih","Godda","Gumla","Hazaribagh","Palamu","Ranchi","West Singhbhum"]},
+  {state:"Karnataka",districts:["Bagalkot","Ballari","Belagavi","Bengaluru Rural","Bengaluru Urban","Bidar","Chikkamagaluru","Dakshina Kannada","Dharwad","Hassan","Kalaburagi","Mysuru","Shivamogga","Tumakuru","Udupi","Vijayapura"]},
+  {state:"Kerala",districts:["Alappuzha","Ernakulam","Idukki","Kannur","Kasaragod","Kollam","Kottayam","Kozhikode","Malappuram","Palakkad","Pathanamthitta","Thiruvananthapuram","Thrissur","Wayanad"]},
+  {state:"Madhya Pradesh",districts:["Bhopal","Chhindwara","Dewas","Gwalior","Indore","Jabalpur","Katni","Morena","Ratlam","Rewa","Sagar","Satna","Sehore","Ujjain","Vidisha"]},
+  {state:"Maharashtra",districts:["Ahmednagar","Akola","Amravati","Aurangabad","Beed","Bhandara","Chandrapur","Dhule","Jalgaon","Kolhapur","Latur","Mumbai City","Mumbai Suburban","Nagpur","Nanded","Nashik","Pune","Raigad","Sangli","Satara","Solapur","Thane"]},
+  {state:"Manipur",districts:["Bishnupur","Chandel","Churachandpur","Imphal East","Imphal West","Senapati","Tamenglong","Thoubal","Ukhrul"]},
+  {state:"Meghalaya",districts:["East Garo Hills","East Khasi Hills","Jaintia Hills","Ri Bhoi","South Garo Hills","West Garo Hills","West Khasi Hills"]},
+  {state:"Mizoram",districts:["Aizawl","Champhai","Kolasib","Lawngtlai","Lunglei","Mamit","Saiha","Serchhip"]},
+  {state:"Nagaland",districts:["Dimapur","Kiphire","Kohima","Longleng","Mokokchung","Mon","Peren","Phek","Tuensang","Wokha","Zunheboto"]},
+  {state:"Odisha",districts:["Angul","Balangir","Balasore","Bargarh","Bhadrak","Cuttack","Dhenkanal","Ganjam","Jagatsinghpur","Jajpur","Kalahandi","Kendrapara","Khordha","Koraput","Mayurbhanj","Puri","Sambalpur","Sundargarh"]},
+  {state:"Punjab",districts:["Amritsar","Bathinda","Faridkot","Fatehgarh Sahib","Fazilka","Ferozepur","Gurdaspur","Hoshiarpur","Jalandhar","Ludhiana","Mansa","Moga","Pathankot","Patiala","Sangrur"]},
+  {state:"Rajasthan",districts:["Ajmer","Alwar","Bharatpur","Bhilwara","Bikaner","Chittorgarh","Jaipur","Jaisalmer","Jodhpur","Kota","Nagaur","Pali","Sikar","Sri Ganganagar","Udaipur"]},
+  {state:"Sikkim",districts:["East Sikkim","North Sikkim","South Sikkim","West Sikkim"]},
+  {state:"Tamil Nadu",districts:["Chennai","Coimbatore","Cuddalore","Dharmapuri","Dindigul","Erode","Kancheepuram","Madurai","Namakkal","Salem","Thanjavur","Thoothukudi","Tiruchirappalli","Tirunelveli","Vellore","Virudhunagar"]},
+  {state:"Telangana",districts:["Adilabad","Hyderabad","Jagtial","Karimnagar","Khammam","Mahabubnagar","Medchal-Malkajgiri","Nalgonda","Nizamabad","Rangareddy","Sangareddy","Siddipet","Warangal"]},
+  {state:"Tripura",districts:["Dhalai","Gomati","Khowai","North Tripura","Sepahijala","South Tripura","Unakoti","West Tripura"]},
+  {state:"Uttar Pradesh",districts:["Agra","Aligarh","Bareilly","Ghaziabad","Gorakhpur","Jhansi","Kanpur Nagar","Lucknow","Meerut","Moradabad","Prayagraj","Saharanpur","Varanasi"]},
+  {state:"Uttarakhand",districts:["Almora","Bageshwar","Chamoli","Champawat","Dehradun","Haridwar","Nainital","Pauri Garhwal","Pithoragarh","Rudraprayag","Tehri Garhwal","Udham Singh Nagar","Uttarkashi"]},
+  {state:"West Bengal",districts:["Bankura","Birbhum","Darjeeling","Hooghly","Howrah","Jalpaiguri","Kolkata","Malda","Murshidabad","Nadia","North 24 Parganas","Paschim Medinipur","Purba Medinipur","South 24 Parganas"]},
+  {state:"Andaman and Nicobar Islands",districts:["Nicobar","North and Middle Andaman","South Andaman"]},
+  {state:"Chandigarh",districts:["Chandigarh"]},
+  {state:"Dadra and Nagar Haveli and Daman and Diu",districts:["Dadra and Nagar Haveli","Daman","Diu"]},
+  {state:"Delhi",districts:["Central Delhi","East Delhi","New Delhi","North Delhi","North East Delhi","North West Delhi","Shahdara","South Delhi","South East Delhi","South West Delhi","West Delhi"]},
+  {state:"Jammu and Kashmir",districts:["Anantnag","Baramulla","Budgam","Doda","Jammu","Kathua","Kupwara","Poonch","Pulwama","Rajouri","Srinagar","Udhampur"]},
+  {state:"Ladakh",districts:["Kargil","Leh"]},
+  {state:"Lakshadweep",districts:["Lakshadweep"]},
+  {state:"Puducherry",districts:["Karaikal","Mahe","Puducherry","Yanam"]},
+];
 const DEFAULT_CONTENT = {
+  version:CONTENT_VERSION,
   brandName:"MONARCH BLENDS",
   companyName:"Shree Siddheshwari Enterprise Pvt. Ltd.",
   logoAlt:"Monarch Blends",
+  ageGate:{
+    title:"18+ Age Verification",
+    text:"This website contains tobacco-related business information and is intended only for users aged 18 years or above.",
+    yes:"Yes, I am 18+",
+    no:"No, leave site",
+    blockedTitle:"Access Restricted",
+    blockedText:"You must be 18 years or older to view this website."
+  },
   nav:[
     {k:"home",l:"Home"},{k:"about",l:"About"},{k:"services",l:"Services"},
     {k:"dealer",l:"Dealer / Distributor"},{k:"careers",l:"Careers"},{k:"contact",l:"Contact"}
@@ -53,7 +105,7 @@ const DEFAULT_CONTENT = {
   chatWelcome:"Welcome to Monarch Blends. Ask me about our products, dealer programme, or machinery rights.",
   chatPlaceholder:"Ask about Monarch Blends…",
   home:{
-    eyebrow:"North American Formula ◆ Made in India ◆ Hand-Picked Tobacco",
+    eyebrow:"Formulated in North America ◆ Made in India ◆ Hand-Picked Tobacco",
     title:"MONARCH BLENDS",
     subtitle:"The Sovereign Standard in Premium Tobacco",
     subtitle2:"By Shree Siddheshwari Enterprise Pvt. Ltd.",
@@ -64,7 +116,7 @@ const DEFAULT_CONTENT = {
     pillarsTitle:"Crafted Without Compromise",
     pillars:[
       {n:"01",h:"Hand-Picked Tobacco",p:"Only the highest-grade leaves selected by hand at source — a sovereign blend begins long before the factory floor."},
-      {n:"02",h:"North American Formula",p:"Developed by expert tobacco scientists in North America, bringing world-class blending precision to a proudly Indian brand."},
+      {n:"02",h:"Formulated in North America",p:"Developed by tobacco expert in North America, bringing world-class blending precision to a proudly Indian brand."},
       {n:"03",h:"2+ Years of R&D",p:"Over two years of intensive research went into perfecting Monarch Blends before a single product reached market."},
       {n:"04",h:"100% Compliant",p:"Full adherence to COTPA, GST, and all Indian regulations. Ethical, transparent, and legally sound — always."}
     ],
@@ -72,12 +124,24 @@ const DEFAULT_CONTENT = {
     storyTitle:"The Monarch Story",
     story:[
       {ico:"🌿",h:"Premium Leaves",p:"Every blend starts with carefully hand-picked, high-quality tobacco leaves selected at origin for character and consistency."},
-      {ico:"🔬",h:"Scientific Formula",p:"Developed in North America over 2+ years — refined with rigorous scientific methodology until it met our exacting standard."},
+      {ico:"🔬",h:"Scientific Formula",p:"Developed by tobacco expert in North America over 2+ years and refined until it met our exacting standard."},
       {ico:"🏭",h:"Indian Manufacturing",p:"Proudly manufactured in Gujarat, India — combining international formulation with the spirit of Indian enterprise."},
       {ico:"👑",h:"The Sovereign Result",p:"Monarch Blends — a premium tobacco product standing apart in quality, compliance, and brand equity across India."}
     ]
   },
   marquee:["Hand-Picked Tobacco","Formulated in North America","Made in India 🇮🇳","2+ Years R&D","100% Compliant","Exclusive Machinery Rights","Pan India Distribution","Customisable Tubes"],
+  products:{
+    eye:"Our Product Section",
+    title:"Our Products",
+    intro:"A focused portfolio built for B2B partners, dealers, distributors, and manufacturing clients.",
+    items:[
+      {name:"Cigarettes",desc:"Premium cigarette products developed for consistent quality, compliant trade, and strong retail presentation.",image:"/products/cigarettes.jpg"},
+      {name:"Paper Tube",desc:"Customisable cigarette paper tube solutions by blend, size, filter, and output specification.",image:"/products/paper-tube.jpg"},
+      {name:"Cigarette Making Machine",desc:"Proprietary cigarette-making machinery with sales support for India and neighbouring countries.",image:"/products/cigarette-making-machine.jpg"},
+      {name:"Chemical",desc:"Business-grade chemical supply support for authorised tobacco manufacturing and packaging requirements.",image:"/products/chemical.jpg"}
+    ],
+    fallbackImage:"/monachblendlogo.jpeg"
+  },
   heroes:{
     about:{eye:"Our Heritage",h1:"About Monarch Blends",sub:"Global expertise. Indian craft. Royal ambition."},
     services:{eye:"What We Do",h1:"Our Services",sub:"From leaf to distribution — a complete sovereign ecosystem"},
@@ -89,13 +153,13 @@ const DEFAULT_CONTENT = {
     title:"The Making of a Sovereign Brand",
     paragraphs:[
       "Monarch Blends is the result of a deliberate, patient pursuit of excellence. Created by Shree Siddheshwari Enterprise Private Limited and headquartered in Gujarat, we set out to build something the Indian market had never seen: a truly premium tobacco product born from North American scientific expertise and Indian manufacturing pride.",
-      "We source only hand-picked, high-quality tobacco leaves. Our blend was formulated in North America by expert tobacco scientists and refined over 2+ years of R&D. The result competes globally while being proudly Made in India.",
+      "We source only hand-picked, high-quality tobacco leaves. Developed by tobacco expert in North America and refined over 2+ years of R&D, the result competes globally while being proudly Made in India.",
       "We also hold the exclusive master rights to sell our proprietary cigarette manufacturing machinery across India and neighbouring countries — creating a complete ecosystem for our partners that goes well beyond the product itself."
     ],
     quote:"Our formula was not rushed. Over two years of research and development — testing, refining, perfecting — went into every aspect of Monarch Blends before a single product reached a retailer.",
     valuesTitle:"Our Core Values",
     values:[
-      {n:"I.",h:"Quality Without Compromise",p:"Hand-picked tobacco, North American formulation, 2+ years R&D — quality is embedded in every decision."},
+      {n:"I.",h:"Quality Without Compromise",p:"Hand-picked tobacco, formulated in North America, 2+ years R&D — quality is embedded in every decision."},
       {n:"II.",h:"Integrity & Full Compliance",p:"100% adherence to all regulatory requirements. Transparent dealings with every partner, always."},
       {n:"III.",h:"Partnership First",p:"We grow only when our dealers and distributors grow. Their success is our foundation."},
       {n:"IV.",h:"Indian Pride, Global Standard",p:"Made in India, formulated to world-class standards — we carry both identities with equal pride."},
@@ -105,12 +169,13 @@ const DEFAULT_CONTENT = {
   services:{eye:"Core Capabilities",title:"The Full Monarch Offering"},
   dealer:{
     tiersEye:"Partnership Tiers",
-    tiersTitle:"Choose Your Level",
+    tiersTitle:"Partnership Tiers",
     tiers:[
       {feat:false,badge:"Retail Dealer",icon:"🏪",title:"Retail Dealer",desc:"Sell Monarch Blends directly through your outlet. The perfect entry into one of India's fastest-growing premium tobacco brands.",items:["Low minimum order quantity","Attractive retail margins","POS & branding materials","Consistent supply guarantee","Promotional campaign support"]},
       {feat:true,badge:"Most Popular",icon:"🏢",title:"Area Distributor",desc:"Distribute across your district or region. Exclusive area rights, higher margins, and full commercial support.",items:["Exclusive territory rights","Superior volume margins","Dedicated sales support team","Priority stock allocation","Co-branded marketing materials"]},
       {feat:false,badge:"State Master",icon:"🌐",title:"State Distributor",desc:"Become the master distributor for your entire state. Build a full dealer network with state-wide exclusivity.",items:["Full state-level exclusivity","Best-in-class margins","Direct factory pricing","Full marketing ecosystem","Personal relationship manager"]}
     ],
+    applyButton:"Apply",
     machineryEye:"Exclusive Rights",
     machineryTitle:"Machinery & Tube — Master Rights for India",
     machineryParagraphs:[
@@ -152,7 +217,23 @@ const DEFAULT_CONTENT = {
       {ico:"🎓",h:"Learning & Dev",p:"Workshops, training, and skill-building programmes."}
     ]
   },
-  contact:{heading:"Reach Out",formTitle:"Send a Message",successTitle:"Message Received",successText:"Thank you for reaching out. We will respond within 1–2 business days.",successButton:"Send Another",sendButton:"Send Message ◆",savingButton:"Saving to Firebase…"},
+  contact:{
+    heading:"Reach Out",
+    formTitle:"Send a Message",
+    successTitle:"Message Received",
+    successText:"Thank you for reaching out. We will respond within 1–2 business days.",
+    successButton:"Send Another",
+    sendButton:"Send Message ◆",
+    savingButton:"Saving to Firebase…",
+    enquiryTypes:["Dealer / Distributor Enquiry","Machinery Purchase","Business Partnership","Career / Job Application","Quality Control Analyst","Sales & Distribution Executive","Machinery Sales Executive","Machine Technician","Electrical Technician","Skilled Worker","Marketing Manager","Forklift Driver & Truck Driver","General Enquiry"],
+    careerRoles:["Quality Control Analyst","Sales & Distribution Executive","Machinery Sales Executive","Machine Technician","Electrical Technician","Skilled Worker","Marketing Manager","Forklift Driver & Truck Driver"],
+    tierLabel:"Partnership Tier",
+    stateLabel:"State",
+    districtLabel:"District",
+    experienceLabel:"Current / Past Business or Work Experience",
+    experiencePlaceholder:"Share details about your current or past business/work experience.",
+    regions:INDIAN_REGIONS
+  },
   footer:{tagline:"Hand-Picked Tobacco ◆ Formulated in North America ◆ Made in India",copyright:"© 2025 Shree Siddheshwari Enterprise Pvt. Ltd.",rights:"All Rights Reserved · Gujarat, India"}
 };
 
@@ -184,6 +265,13 @@ const GoldText = ({children,sz=15,ls=2,style={}}) => (
   </span>
 );
 
+const BrandText = ({children,sz=24,style={}}) => (
+  <span style={{fontFamily:'"Snell Roundhand","Brush Script MT",cursive',fontSize:sz,fontWeight:900,
+    letterSpacing:0,background:GG,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",...style}}>
+    {children}
+  </span>
+);
+
 const Btn = ({children,onClick,full,danger,outline,sm}) => {
   const base = {cursor:"pointer",fontFamily:"Cinzel,serif",letterSpacing:2,
     textTransform:"uppercase",border:"none",transition:"transform .2s,opacity .2s"};
@@ -202,6 +290,58 @@ const SecTitle = ({children,white,mb=48}) => (
     {children}
   </div>
 );
+
+function AgeGate({copy}) {
+  const [ok,setOk] = useState(null);
+  useEffect(()=>{
+    setOk(window.localStorage.getItem("monarch_age_confirmed")==="yes");
+  },[]);
+  if(ok===true) return null;
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,.92)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{width:"min(460px,100%)",background:"#111",border:`1px solid ${BR}`,borderTop:`2px solid ${G}`,padding:34,textAlign:"center",boxShadow:"0 24px 80px rgba(0,0,0,.55)"}}>
+        <GoldText sz={22} ls={2} style={{display:"block",marginBottom:16}}>{ok===false?copy?.blockedTitle:copy?.title}</GoldText>
+        <p style={{fontSize:14,color:MU,lineHeight:1.8,marginBottom:24}}>{ok===false?copy?.blockedText:copy?.text}</p>
+        {ok===false?(
+          <Btn outline onClick={()=>window.location.href="https://www.google.com"}>Leave Site</Btn>
+        ):(
+          <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
+            <Btn onClick={()=>{window.localStorage.setItem("monarch_age_confirmed","yes");setOk(true);}}>{copy?.yes}</Btn>
+            <Btn outline onClick={()=>setOk(false)}>{copy?.no}</Btn>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProductsSection({products}) {
+  const list = products?.items || DEFAULT_CONTENT.products.items;
+  const fallback = products?.fallbackImage || LOGO;
+  return (
+    <section style={{padding:"80px 60px",maxWidth:1300,margin:"0 auto"}}>
+      <SecEye>{products?.eye || DEFAULT_CONTENT.products.eye}</SecEye>
+      <SecTitle mb={22}>{products?.title || DEFAULT_CONTENT.products.title}</SecTitle>
+      <p style={{fontFamily:"Cormorant Garamond,serif",fontStyle:"italic",fontSize:18,color:MU,lineHeight:1.7,maxWidth:720,marginBottom:36}}>
+        {products?.intro || DEFAULT_CONTENT.products.intro}
+      </p>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:1,background:"rgba(184,134,11,.15)"}}>
+        {list.map(item=>(
+          <div key={item.name} style={{background:"#0A0A0A",minHeight:360,display:"flex",flexDirection:"column"}}>
+            <div style={{height:190,background:"#050505",overflow:"hidden",borderBottom:"1px solid rgba(184,134,11,.14)"}}>
+              <img src={item.image || fallback} alt={item.name} onError={e=>{e.currentTarget.src=fallback;}}
+                style={{width:"100%",height:"100%",objectFit:"cover",filter:"saturate(.9) contrast(1.05)"}}/>
+            </div>
+            <div style={{padding:24,flex:1}}>
+              <h3 style={{fontFamily:"Cinzel,serif",fontSize:14,color:GP,letterSpacing:1,marginBottom:10}}>{item.name}</h3>
+              <p style={{fontSize:13,color:MU,lineHeight:1.75}}>{item.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 const PageHero = ({eye,h1,sub}) => (
   <div style={{height:"44vh",minHeight:380,background:"#000",display:"flex",alignItems:"center",
@@ -246,6 +386,10 @@ function useTenantContent() {
     const unsub = onSnapshot(ref, async snap => {
       if(!snap.exists()){
         await setDoc(ref,{content:DEFAULT_CONTENT,settings:DEF_SETTINGS,updatedAt:serverTimestamp()});
+        return;
+      }
+      if(snap.data().content?.version !== CONTENT_VERSION){
+        await setDoc(ref,{content:DEFAULT_CONTENT,settings:snap.data().settings || DEF_SETTINGS,updatedAt:serverTimestamp()},{merge:true});
         return;
       }
       const nextContent = mergeContent(DEFAULT_CONTENT,snap.data().content);
@@ -530,7 +674,15 @@ function Admin({onClose,contentTools}) {
               <span style={{fontSize:11,color:G,fontFamily:"Cinzel,serif"}}>{c.type}</span>
             </div>
             <div style={{fontSize:12,color:MU,marginBottom:8}}>{c.email}{c.phone?" · "+c.phone:""}</div>
+            {(c.tier||c.state||c.district||c.careerRole)&&(
+              <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:10}}>
+                {[c.tier,c.state,c.district,c.careerRole].filter(Boolean).map(v=>(
+                  <span key={v} style={{fontSize:11,color:GP,border:`1px solid rgba(184,134,11,.18)`,padding:"3px 10px"}}>{v}</span>
+                ))}
+              </div>
+            )}
             <div style={{fontSize:13,color:"rgba(248,244,236,.65)",lineHeight:1.7}}>{c.message}</div>
+            {c.experience&&<div style={{fontSize:12,color:MU,lineHeight:1.7,marginTop:10,borderTop:"1px solid rgba(184,134,11,.08)",paddingTop:10}}>{c.experience}</div>}
             <div style={{fontSize:11,color:"rgba(248,244,236,.22)",marginTop:10}}>
               {c._ts?.toDate?.()?.toLocaleString("en-IN")||""}
             </div>
@@ -563,7 +715,7 @@ export default function App() {
   const jobs    = useCol("jobs",DEF_JOBS);
   const svcs    = useCol("services",DEF_SVCS);
   const [settings,setSettings] = useState(DEF_SETTINGS);
-  const [form,setForm] = useState({name:"",company:"",email:"",phone:"",type:"Dealer / Distributor Enquiry",message:""});
+  const [form,setForm] = useState({name:"",company:"",email:"",phone:"",type:"Dealer / Distributor Enquiry",tier:"",state:"",district:"",careerRole:"",experience:"",message:""});
   const [sent,setSent] = useState(false);
   const [sending,setSending] = useState(false);
 
@@ -578,11 +730,26 @@ export default function App() {
   },[page]);
 
   const go = p => { setPage(p); window.scrollTo({top:0,behavior:"smooth"}); };
+  const dealerTierTitles = (content.dealer?.tiers || DEFAULT_CONTENT.dealer.tiers).map(t=>t.title);
+  const regions = content.contact?.regions || DEFAULT_CONTENT.contact.regions;
+  const selectedRegion = regions.find(r=>r.state===form.state);
+  const isDealerType = form.type==="Dealer / Distributor Enquiry";
+  const isCareerType = form.type==="Career / Job Application" || (content.contact?.careerRoles || []).includes(form.type);
+  const needsDistrict = isDealerType && form.tier && form.tier!=="State Distributor";
+  const applyForTier = tier => {
+    setForm(f=>({...f,type:"Dealer / Distributor Enquiry",tier,careerRole:""}));
+    go("contact");
+  };
+  const applyForJob = role => {
+    setForm(f=>({...f,type:"Career / Job Application",careerRole:role,tier:"",state:"",district:""}));
+    go("contact");
+  };
 
   const submitForm = async()=>{
     if(!form.name||!form.email) return;
     setSending(true);
-    await addDoc(collection(db,"contacts"),{...form,_ts:serverTimestamp()});
+    const careerRoles = content.contact?.careerRoles || DEFAULT_CONTENT.contact.careerRoles;
+    await addDoc(collection(db,"contacts"),{...form,careerRole:isCareerType?(form.careerRole || careerRoles[0] || ""):form.careerRole,tenantId:TENANT_ID,_ts:serverTimestamp()});
     setSending(false); setSent(true);
   };
 
@@ -601,6 +768,7 @@ export default function App() {
 
   return (
     <div className="site-shell" style={{fontFamily:"Inter,sans-serif",background:"#060606",color:IV,minHeight:"100vh",overflowX:"hidden"}}>
+      <AgeGate copy={content.ageGate || DEFAULT_CONTENT.ageGate}/>
 
       {/* ── NAV ── */}
       <nav className="site-nav" style={{position:"fixed",top:0,left:0,right:0,zIndex:500,height:68,
@@ -614,7 +782,7 @@ export default function App() {
             <img src={LOGO} alt="MB" style={{width:36,height:36,borderRadius:"50%",objectFit:"cover"}}/>
           </div>
           <div>
-            <GoldText sz={15} ls={3}>{content.brandName}</GoldText>
+            <BrandText sz={24}>{content.brandName}</BrandText>
             <div style={{fontSize:8,color:"rgba(248,244,236,.4)",letterSpacing:2,textTransform:"uppercase",marginTop:2}}>{content.companyName}</div>
           </div>
         </div>
@@ -663,10 +831,10 @@ export default function App() {
               color:G,borderBottom:"1px solid rgba(184,134,11,.3)",display:"inline-block",paddingBottom:10,marginBottom:26}}>
               {content.home?.eyebrow}
             </div>
-            <h1 style={{fontFamily:"Cinzel,serif",fontSize:"clamp(36px,8vw,90px)",fontWeight:900,
-              letterSpacing:6,lineHeight:.95,background:GG,
-              WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:20}}>
+            <h1 style={{lineHeight:.95,marginBottom:20}}>
+              <BrandText sz="clamp(54px,10vw,118px)" style={{display:"inline-block"}}>
               {content.home?.title}
+              </BrandText>
             </h1>
             <p style={{fontFamily:"Cormorant Garamond,serif",fontStyle:"italic",
               fontSize:"clamp(15px,2vw,21px)",color:MU,letterSpacing:2,marginBottom:34,lineHeight:1.6}}>
@@ -685,6 +853,7 @@ export default function App() {
         </section>
 
         <Marquee items={content.marquee}/>
+        <ProductsSection products={content.products}/>
 
         {/* PILLARS */}
         <section style={{padding:"88px 60px",maxWidth:1300,margin:"0 auto"}}>
@@ -749,11 +918,15 @@ export default function App() {
             </div>
           </div>
         </div>
+        <div style={{background:"#111",borderTop:"1px solid rgba(184,134,11,.15)",borderBottom:"1px solid rgba(184,134,11,.15)"}}>
+          <ProductsSection products={content.products}/>
+        </div>
       </>}
 
       {/* ═══════════ SERVICES ═══════════ */}
       {page==="services"&&<>
         <PageHero {...content.heroes?.services}/>
+        <ProductsSection products={content.products}/>
         <section style={{padding:"80px 60px",maxWidth:1300,margin:"0 auto"}}>
           <SecEye>{content.services?.eye}</SecEye>
           <SecTitle>{content.services?.title}</SecTitle>
@@ -808,6 +981,9 @@ export default function App() {
                     </li>
                   ))}
                 </ul>
+                <div style={{marginTop:26}}>
+                  <Btn full sm onClick={()=>applyForTier(t.title)}>{content.dealer?.applyButton || "Apply"}</Btn>
+                </div>
               </div>
             ))}
           </div>
@@ -896,7 +1072,7 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-                <button onClick={()=>go("contact")}
+                <button onClick={()=>applyForJob(j.title)}
                   style={{background:"none",border:`1px solid rgba(184,134,11,.45)`,color:G,cursor:"pointer",
                     fontFamily:"Cinzel,serif",fontSize:9,fontWeight:700,letterSpacing:2,textTransform:"uppercase",
                     padding:"10px 22px",whiteSpace:"nowrap",transition:"background .25s,color .25s"}}
@@ -973,13 +1149,64 @@ ${settings.address}`},
                   </div>
                   <div style={{marginBottom:16}}>
                     <label style={{display:"block",fontFamily:"Cinzel,serif",fontSize:9,letterSpacing:2,textTransform:"uppercase",color:MU,marginBottom:7}}>Enquiry Type</label>
-                    <select value={form.type} onChange={e=>setForm(f=>({...f,type:e.target.value}))}
+                    <select value={form.type} onChange={e=>setForm(f=>({...f,type:e.target.value,tier:e.target.value==="Dealer / Distributor Enquiry"?f.tier:"",careerRole:e.target.value==="Career / Job Application"?f.careerRole:""}))}
                       style={{width:"100%",background:"#0A0A0A",border:`1px solid ${BR}`,color:IV,
                         fontFamily:"Inter,sans-serif",fontSize:13,padding:"12px 14px",outline:"none",cursor:"pointer"}}
                       onFocus={e=>e.target.style.borderColor=G} onBlur={e=>e.target.style.borderColor=BR}>
-                      {["Dealer / Distributor Enquiry","Machinery Purchase","Business Partnership","Career / Job Application","General Enquiry"].map(o=><option key={o}>{o}</option>)}
+                      {(content.contact?.enquiryTypes || DEFAULT_CONTENT.contact.enquiryTypes).map(o=><option key={o}>{o}</option>)}
                     </select>
                   </div>
+                  {isDealerType&&(
+                    <>
+                      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+                        <div style={{marginBottom:16}}>
+                          <label style={{display:"block",fontFamily:"Cinzel,serif",fontSize:9,letterSpacing:2,textTransform:"uppercase",color:MU,marginBottom:7}}>{content.contact?.tierLabel || "Partnership Tier"}</label>
+                          <select value={form.tier} onChange={e=>setForm(f=>({...f,tier:e.target.value,district:e.target.value==="State Distributor"?"":f.district}))}
+                            style={{width:"100%",background:"#0A0A0A",border:`1px solid ${BR}`,color:IV,fontFamily:"Inter,sans-serif",fontSize:13,padding:"12px 14px",outline:"none",cursor:"pointer"}}>
+                            <option value="">Select tier</option>
+                            {dealerTierTitles.map(o=><option key={o}>{o}</option>)}
+                          </select>
+                        </div>
+                        <div style={{marginBottom:16}}>
+                          <label style={{display:"block",fontFamily:"Cinzel,serif",fontSize:9,letterSpacing:2,textTransform:"uppercase",color:MU,marginBottom:7}}>{content.contact?.stateLabel || "State"}</label>
+                          <select value={form.state} onChange={e=>setForm(f=>({...f,state:e.target.value,district:""}))}
+                            style={{width:"100%",background:"#0A0A0A",border:`1px solid ${BR}`,color:IV,fontFamily:"Inter,sans-serif",fontSize:13,padding:"12px 14px",outline:"none",cursor:"pointer"}}>
+                            <option value="">Select state</option>
+                            {regions.map(r=><option key={r.state}>{r.state}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                      {needsDistrict&&(
+                        <div style={{marginBottom:16}}>
+                          <label style={{display:"block",fontFamily:"Cinzel,serif",fontSize:9,letterSpacing:2,textTransform:"uppercase",color:MU,marginBottom:7}}>{content.contact?.districtLabel || "District"}</label>
+                          <select value={form.district} onChange={e=>setForm(f=>({...f,district:e.target.value}))}
+                            disabled={!selectedRegion}
+                            style={{width:"100%",background:"#0A0A0A",border:`1px solid ${BR}`,color:IV,fontFamily:"Inter,sans-serif",fontSize:13,padding:"12px 14px",outline:"none",cursor:"pointer",opacity:selectedRegion?1:.55}}>
+                            <option value="">{selectedRegion?"Select district":"Select state first"}</option>
+                            {(selectedRegion?.districts || []).map(d=><option key={d}>{d}</option>)}
+                          </select>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {isCareerType&&(
+                    <div style={{marginBottom:16}}>
+                      <label style={{display:"block",fontFamily:"Cinzel,serif",fontSize:9,letterSpacing:2,textTransform:"uppercase",color:MU,marginBottom:7}}>Career Job Type</label>
+                      <select value={form.careerRole || (content.contact?.careerRoles || [])[0] || ""} onChange={e=>setForm(f=>({...f,careerRole:e.target.value}))}
+                        style={{width:"100%",background:"#0A0A0A",border:`1px solid ${BR}`,color:IV,fontFamily:"Inter,sans-serif",fontSize:13,padding:"12px 14px",outline:"none",cursor:"pointer"}}>
+                        {[...new Set([...(content.contact?.careerRoles || DEFAULT_CONTENT.contact.careerRoles),...jobs.filter(j=>j.active).map(j=>j.title)])].map(o=><option key={o}>{o}</option>)}
+                      </select>
+                    </div>
+                  )}
+                  {(isDealerType||isCareerType)&&(
+                    <div style={{marginBottom:16}}>
+                      <label style={{display:"block",fontFamily:"Cinzel,serif",fontSize:9,letterSpacing:2,textTransform:"uppercase",color:MU,marginBottom:7}}>{content.contact?.experienceLabel || "Current / Past Business or Work Experience"}</label>
+                      <textarea value={form.experience} onChange={e=>setForm(f=>({...f,experience:e.target.value}))}
+                        placeholder={content.contact?.experiencePlaceholder || "Share details about your experience."}
+                        style={{width:"100%",background:"#0A0A0A",border:`1px solid ${BR}`,color:IV,fontFamily:"Inter,sans-serif",fontSize:13,padding:"12px 14px",outline:"none",resize:"vertical",minHeight:86,transition:"border-color .2s"}}
+                        onFocus={e=>e.target.style.borderColor=G} onBlur={e=>e.target.style.borderColor=BR}/>
+                    </div>
+                  )}
                   <div style={{marginBottom:16}}>
                     <label style={{display:"block",fontFamily:"Cinzel,serif",fontSize:9,letterSpacing:2,textTransform:"uppercase",color:MU,marginBottom:7}}>Message</label>
                     <textarea value={form.message} onChange={e=>setForm(f=>({...f,message:e.target.value}))}
@@ -1006,7 +1233,7 @@ ${settings.address}`},
               <img src={LOGO} alt="MB" style={{width:36,height:36,borderRadius:"50%",objectFit:"cover"}}/>
             </div>
             <div>
-              <GoldText sz={14} ls={3}>{content.brandName}</GoldText>
+              <BrandText sz={22}>{content.brandName}</BrandText>
               <div style={{fontSize:8,color:"rgba(248,244,236,.35)",letterSpacing:2,textTransform:"uppercase",marginTop:2}}>{content.companyName}</div>
             </div>
           </div>
