@@ -66,3 +66,153 @@ select option {
   background: #111;
   color: #f8f4ec;
 }
+
+.site-shell {
+  overflow-x: clip;
+}
+
+@media (max-width: 1024px) {
+  .site-nav {
+    height: auto !important;
+    min-height: 68px;
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 18px !important;
+  }
+
+  .site-brand {
+    width: 100%;
+  }
+
+  .site-nav-actions {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .site-nav-actions button {
+    flex: 0 0 auto;
+  }
+
+  .site-shell [style*="grid-template-columns: repeat(5, 1fr)"],
+  .site-shell [style*="grid-template-columns: repeat(4, 1fr)"],
+  .site-shell [style*="grid-template-columns: repeat(3, 1fr)"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .site-shell [style*="grid-template-columns: 1fr 1fr"],
+  .site-shell [style*="grid-template-columns: 1.2fr 1fr"],
+  .site-shell [style*="grid-template-columns: 1fr 1.6fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 34px !important;
+  }
+
+  .site-shell [style*="grid-template-columns: 1fr 1px 1fr"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1px !important;
+  }
+
+  .site-shell [style*="grid-template-columns: 1fr 1px 1fr"] > div:nth-child(even) {
+    display: none !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-shell nav + section,
+  .site-shell nav + div {
+    scroll-margin-top: 120px;
+  }
+
+  .site-shell section,
+  .site-shell footer,
+  .site-shell [style*="padding: 88px 60px"],
+  .site-shell [style*="padding: 80px 60px"],
+  .site-shell [style*="padding: 70px 60px"],
+  .site-shell [style*="padding: 0px 60px 32px"] {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .site-shell [style*="height: 100vh"] {
+    height: auto !important;
+    min-height: 760px !important;
+    padding-top: 132px !important;
+    padding-bottom: 54px !important;
+  }
+
+  .site-shell [style*="height: 44vh"] {
+    height: auto !important;
+    min-height: 320px !important;
+    padding: 132px 20px 54px !important;
+  }
+
+  .site-shell [style*="width: 190px"] {
+    width: 142px !important;
+    height: 142px !important;
+    margin-bottom: 28px !important;
+  }
+
+  .site-shell h1,
+  .site-shell [style*="letter-spacing: 6px"] {
+    letter-spacing: 2px !important;
+  }
+
+  .site-shell [style*="grid-template-columns: repeat(5, 1fr)"],
+  .site-shell [style*="grid-template-columns: repeat(4, 1fr)"],
+  .site-shell [style*="grid-template-columns: repeat(3, 1fr)"],
+  .site-shell [style*="grid-template-columns: 1fr 1px 1fr"],
+  .site-shell [style*="grid-template-columns: 1fr 1fr"],
+  .site-shell [style*="grid-template-columns: 90px 1fr"],
+  .site-shell [style*="grid-template-columns: 1.2fr 1fr"],
+  .site-shell [style*="grid-template-columns: 1fr 1.6fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .site-shell [style*="grid-template-columns: 90px 1fr"] > div:first-child {
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(184, 134, 11, 0.12) !important;
+    justify-content: flex-start !important;
+    padding: 20px 24px !important;
+  }
+
+  .site-shell [style*="padding: 34px 36px"],
+  .site-shell [style*="padding: 44px 32px"],
+  .site-shell [style*="padding: 42px"],
+  .site-shell [style*="padding: 40px 28px"],
+  .site-shell [style*="padding: 36px 24px"] {
+    padding: 24px !important;
+  }
+
+  .site-shell [style*="position: fixed"][style*="width: 340px"] {
+    width: calc(100vw - 28px) !important;
+    right: 14px !important;
+    bottom: 14px !important;
+  }
+
+  .site-shell footer > div:last-child {
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .site-shell footer [style*="text-align: right"] {
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .site-nav-actions button {
+    font-size: 9px !important;
+    padding: 8px 10px !important;
+  }
+
+  .site-brand [style*="font-size: 8px"] {
+    max-width: 230px;
+    line-height: 1.4;
+  }
+
+  .site-shell [style*="display: flex"][style*="gap: 18px"] {
+    gap: 10px !important;
+  }
+}
