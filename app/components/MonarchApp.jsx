@@ -46,7 +46,7 @@ const DEF_SVCS = [
 ];
 const DEF_SETTINGS = {phone:"+91 99989 08799 / +91 94096 78113",email:"shreesiddheshwarienterprisepvt@gmail.com",address:"Gujarat, India",hours:"Mon–Sat  9:00 AM – 6:00 PM IST"};
 const TENANT_ID = process.env.NEXT_PUBLIC_TENANT_ID || "monarch-blends";
-const CONTENT_VERSION = "2026-07-24-age-consent";
+const CONTENT_VERSION = "2026-07-24-brand-font";
 const AGE_GATE_ENABLED = false;
 const INDIAN_REGIONS = [
   {state:"Andhra Pradesh",districts:["Anantapur","Chittoor","East Godavari","Guntur","Krishna","Kurnool","Nellore","Prakasam","Srikakulam","Visakhapatnam","Vizianagaram","West Godavari","YSR Kadapa"]},
@@ -88,7 +88,7 @@ const INDIAN_REGIONS = [
 ];
 const DEFAULT_CONTENT = {
   version:CONTENT_VERSION,
-  brandName:"MONARCH BLENDS",
+  brandName:"Monarch Blends",
   companyName:"Shree Siddheshwari Enterprise Pvt. Ltd.",
   logoAlt:"Monarch Blends",
   ageGate:{
@@ -108,7 +108,7 @@ const DEFAULT_CONTENT = {
   chatPlaceholder:"Ask about Monarch Blends…",
   home:{
     eyebrow:"Formulated in North America ◆ Made in India ◆ Hand-Picked Tobacco",
-    title:"MONARCH BLENDS",
+    title:"Monarch Blends",
     subtitle:"The Sovereign Standard in Premium Tobacco",
     subtitle2:"By Shree Siddheshwari Enterprise Pvt. Ltd.",
     location:"Est. Gujarat, India",
@@ -269,7 +269,7 @@ const GoldText = ({children,sz=15,ls=2,style={}}) => (
 
 const BrandText = ({children,sz=24,style={}}) => (
   <span style={{fontFamily:'"Snell Roundhand","Brush Script MT",cursive',fontSize:sz,fontWeight:900,
-    letterSpacing:0,background:GG,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",...style}}>
+    letterSpacing:0,textTransform:"none",fontStyle:"italic",background:GG,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",...style}}>
     {children}
   </span>
 );
