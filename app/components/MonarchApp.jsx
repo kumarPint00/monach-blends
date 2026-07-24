@@ -7,6 +7,7 @@ import { db } from "../firebase";
 import { AGE_GATE_ENABLED, BR, DEF_JOBS, DEF_SETTINGS, DEF_SVCS, DEFAULT_CONTENT, G, GB, GG, GP, IV, LOGO, MU, TENANT_ID } from "../config/siteConfig";
 import { useCol, useTenantContent } from "../hooks/useFirestoreData";
 import { AgeGate, BrandText, Btn, GoldText, Marquee, PageHero, ProductsSection, SecEye, SecTitle } from "./ui";
+import SiteNavbar from "./navigation/SiteNavbar";
 
 const Admin = dynamic(() => import("./admin/AdminPanel"), { ssr:false });
 const Chat = dynamic(() => import("./widgets/Chat"), { ssr:false });
@@ -60,7 +61,7 @@ export default function MonarchApp() {
 
   if(admin) return <Admin onClose={()=>setAdmin(false)} contentTools={contentTools}/>;
 
-  const NAV=content.nav || DEFAULT_CONTENT.nav;
+  const NAV=content.nav?.length ? content.nav : DEFAULT_CONTENT.nav;
 
   const FInput=({label,field,type="text",ph,full})=>(
     <div style={{marginBottom:16,gridColumn:full?"1 / -1":undefined}}>
@@ -75,37 +76,14 @@ export default function MonarchApp() {
     <div className="site-shell" style={{fontFamily:"Inter,sans-serif",background:"#060606",color:IV,minHeight:"100vh",overflowX:"hidden"}}>
       {AGE_GATE_ENABLED&&<AgeGate copy={content.ageGate || DEFAULT_CONTENT.ageGate}/>}
 
-      {/* ── NAV ── */}
-      <nav className="site-nav" style={{position:"fixed",top:0,left:0,right:0,zIndex:500,height:68,
-        background:"rgba(6,6,6,.95)",backdropFilter:"blur(20px)",
-        borderBottom:`1px solid ${BR}`,display:"flex",alignItems:"center",
-        justifyContent:"space-between",padding:"0 36px"}}>
-        <div className="site-brand" style={{display:"flex",alignItems:"center",gap:12,cursor:"pointer"}} onClick={()=>go("home")}>
-          <div style={{width:42,height:42,borderRadius:"50%",padding:2,
-            background:`conic-gradient(${G},${GB},${GP},${GB},${G})`,
-            display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <img src={LOGO} alt="MB" style={{width:36,height:36,borderRadius:"50%",objectFit:"cover"}}/>
-          </div>
-          <div>
-            <BrandText sz={24}>{content.brandName}</BrandText>
-            <div style={{fontSize:8,color:"rgba(248,244,236,.4)",letterSpacing:2,textTransform:"uppercase",marginTop:2}}>{content.companyName}</div>
-          </div>
-        </div>
-        <div className="site-nav-actions" style={{display:"flex",gap:0}}>
-          {NAV.map(p=>(
-            <button key={p.k} onClick={()=>go(p.k)}
-              style={{background:"none",border:"none",cursor:"pointer",fontFamily:"Cinzel,serif",fontSize:10,
-                fontWeight:600,color:page===p.k?GB:MU,letterSpacing:2,textTransform:"uppercase",
-                padding:"8px 13px",borderBottom:page===p.k?`1px solid ${GB}`:"1px solid transparent",
-                transition:"color .2s"}}>
-              {p.l}
-            </button>
-          ))}
-          <button onClick={()=>setAdmin(true)}
-            style={{background:"none",border:"none",cursor:"pointer",fontFamily:"Cinzel,serif",fontSize:9,
-              color:G,letterSpacing:2,padding:"8px 13px"}}>⚙ Admin</button>
-        </div>
-      </nav>
+      <SiteNavbar
+        brandName={content.brandName}
+        companyName={content.companyName}
+        navItems={NAV}
+        activePage={page}
+        onNavigate={go}
+        onAdmin={()=>setAdmin(true)}
+      />
 
       {/* ═══════════ HOME ═══════════ */}
       {page==="home"&&<>
