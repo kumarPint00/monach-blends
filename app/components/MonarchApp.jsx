@@ -47,6 +47,7 @@ const DEF_SVCS = [
 const DEF_SETTINGS = {phone:"+91 99989 08799 / +91 94096 78113",email:"shreesiddheshwarienterprisepvt@gmail.com",address:"Gujarat, India",hours:"Mon–Sat  9:00 AM – 6:00 PM IST"};
 const TENANT_ID = process.env.NEXT_PUBLIC_TENANT_ID || "monarch-blends";
 const CONTENT_VERSION = "2026-07-24-age-consent";
+const AGE_GATE_ENABLED = false;
 const INDIAN_REGIONS = [
   {state:"Andhra Pradesh",districts:["Anantapur","Chittoor","East Godavari","Guntur","Krishna","Kurnool","Nellore","Prakasam","Srikakulam","Visakhapatnam","Vizianagaram","West Godavari","YSR Kadapa"]},
   {state:"Arunachal Pradesh",districts:["Anjaw","Changlang","East Kameng","East Siang","Kurung Kumey","Lohit","Lower Dibang Valley","Lower Subansiri","Papum Pare","Tawang","Tirap","Upper Siang","Upper Subansiri","West Kameng","West Siang"]},
@@ -777,7 +778,7 @@ export default function App() {
 
   return (
     <div className="site-shell" style={{fontFamily:"Inter,sans-serif",background:"#060606",color:IV,minHeight:"100vh",overflowX:"hidden"}}>
-      <AgeGate copy={content.ageGate || DEFAULT_CONTENT.ageGate}/>
+      {AGE_GATE_ENABLED&&<AgeGate copy={content.ageGate || DEFAULT_CONTENT.ageGate}/>}
 
       {/* ── NAV ── */}
       <nav className="site-nav" style={{position:"fixed",top:0,left:0,right:0,zIndex:500,height:68,
